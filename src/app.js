@@ -2,7 +2,7 @@ const express = require("express");
 
 const app = express();
 const port = process.env.PORT || 3000;
- 
+ app.use(express.json()); // <--- Indispensable pour lire le JSON des requêtes POST
 function calculateTotal(items) {
 
   // INTENTIONAL DEFECT: students must diagnose this using the tests .
@@ -43,6 +43,30 @@ let tasks = [
 // Route GET /tasks (Issue #1)
 app.get('/tasks', (req, res) => {
   res.status(200).json(tasks);
+});
+
+// Route POST /tasks (Issue #2)
+app.post('/tasks', (req, res) => {
+  const { title } = req.body;
+
+  // Critère : un titre vide ou absent retourne HTTP 400
+  if (!title || typeof title !== 'string' || title.trim() === '') {
+    return res.status(400).json({ error: 'Le titre est obligatoire et ne peut pas être vide.' });
+  }
+
+  // Critère : génération d'un ID unique
+  const newId = tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
+
+  const newTask = {
+    id: newId,
+    title: title.trim(),
+    completed: false
+  };
+
+  tasks.push(newTask);
+
+  // Critère : la nouvelle tâche est renvoyée
+  res.status(201).json(newTask);
 });
 
 module.exports = { app, calculateTotal };
