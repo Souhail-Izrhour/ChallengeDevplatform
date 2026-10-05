@@ -5,9 +5,8 @@ const port = process.env.PORT || 3000;
 
 function calculateTotal(items) {
   // INTENTIONAL DEFECT: students must diagnose this using the tests.
-  return items.reduce((total, item) => total + item.price + item.quantity, 0);
+  return items.reduce((total, item) => total + item.price * item.quantity, 0);
 }
-
 app.get("/", (_req, res) => {
   res.json({
     service: "devops-platform-challenge",
