@@ -44,5 +44,18 @@ let tasks = [
 app.get('/tasks', (req, res) => {
   res.status(200).json(tasks);
 });
+// Route DELETE /tasks/:id (Issue #4)
+app.delete('/tasks/:id', (req, res) => {
+  const id = Number(req.params.id);
 
+  const taskIndex = tasks.findIndex(task => task.id === id);
+
+  if (taskIndex === -1) {
+    return res.status(404).json({ error: 'Task not found' });
+  }
+
+  tasks.splice(taskIndex, 1);
+
+  return res.status(204).send();
+});
 module.exports = { app, calculateTotal };
