@@ -10,9 +10,13 @@ app.use(express.json());
 let tasks = [
   { id: 1, title: "Sample Task", completed: false }
 ];
+ 
+function calculateTotal(items) {
+
 
 function calculateTotal(items) {
   return items.reduce((total, item) => total + (item.price * item.quantity), 0);
+
 }
 
 app.get("/", (_req, res) => {
@@ -63,6 +67,31 @@ if (require.main === module) {
     console.log(`Application listening on port ${port}`);
   });
 }
+// Liste de tâches en mémoire pour démarrer
+let tasks = [
+  { id: 1, title: 'Première tâche de test', completed: false },
+  { id: 2, title: 'Deuxième tâche', completed: true }
+];
+
+// Route GET /tasks (Issue #1)
+app.get('/tasks', (req, res) => {
+  res.status(200).json(tasks);
+});
+// Route DELETE /tasks/:id (Issue #4)
+app.delete('/tasks/:id', (req, res) => {
+  const id = Number(req.params.id);
+
+  const taskIndex = tasks.findIndex(task => task.id === id);
 
 module.exports = { app, calculateTotal, tasks };
+
+  if (taskIndex === -1) {
+    return res.status(404).json({ error: 'Task not found' });
+  }
+
+  tasks.splice(taskIndex, 1);
+
+  return res.status(204).send();
+});
+module.exports = { app, calculateTotal };
 
