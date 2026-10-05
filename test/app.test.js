@@ -49,4 +49,70 @@ test("GET /tasks returns 200 and a JSON array of tasks", async () => {
     // Ferme proprement le serveur après le test
     server.close();
   }
+});test("DELETE /tasks/:id deletes an existing task and returns 204", async () => {
+  const server = app.listen(0);
+  const { port } = server.address();
+
+  try {
+    const getResponse = await fetch(`http://localhost:${port}/tasks`);
+    const tasks = await getResponse.json();
+
+    assert.ok(tasks.length > 0, "Il doit y avoir au moins une tâche");
+
+    const taskId = tasks[0].id;
+
+    const response = await fetch(`http://localhost:${port}/tasks/${taskId}`, {
+      method: "DELETE"
+    });
+
+    assert.equal(response.status, 204);
+  } finally {
+    server.close();
+  }
+});
+
+test("DELETE /tasks/:id returns 404 for an unknown task", async () => {
+  const server = app.listen(0);
+  const { port } = server.address();
+
+  try {
+    const response = await fetch(`http://localhost:${port}/tasks/999999`);
+
+    assert.equal(response.status, 404);
+  } finally {
+    server.close();
+  }
+});
+
+test("DELETE /tasks/:id actually removes the task", async () => {
+  const server = app.listen(0);
+  const { port } = server.address();
+
+  try {
+    const getResponse = await fetch(`http://localhost:${port}/tasks`);
+    const tasks = await getResponse.json();
+
+    assert.ok(tasks.length > 0, "Il doit y avoir au moins une tâche");
+
+    const taskId = tasks[0].id;
+
+    const deleteResponse = await fetch(
+      `http://localhost:${port}/tasks/${taskId}`,
+      {
+        method: "DELETE"
+      }
+    );
+
+    assert.equal(deleteResponse.status, 204);
+
+    const checkResponse = await fetch(`http://localhost:${port}/tasks`);
+    const remainingTasks = await checkResponse.json();
+
+    assert.equal(
+      remainingTasks.some(task => task.id === taskId),
+      false
+    );
+  } finally {
+    server.close();
+  }
 });
