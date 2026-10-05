@@ -1,7 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { app, calculateTotal } = require("../src/app"); // <--- C'est ici qu'il faut bien importer app en plus de calculateTotal
-
+  
 test("calculates the total for several items", () => {
   const items = [
     { price: 10, quantity: 2 },
