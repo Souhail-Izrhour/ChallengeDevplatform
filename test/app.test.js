@@ -33,7 +33,7 @@ test("GET /tasks returns 200 and a JSON array of tasks", async () => {
     const response = await fetch(`http://localhost:${port}/tasks`);
     
     // Vérifie le code HTTP 200
-    assert.equal(response.status, 500);
+    assert.equal(response.status, 200);
     
     // Vérifie que la réponse est un tableau JSON
     const tasks = await response.json();
